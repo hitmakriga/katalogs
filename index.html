@@ -91,7 +91,7 @@
             margin: 2rem 0;
         }
 
-        /* Produkta karte - poga "pievienot grozam" NAV, bet bilde ir klikšķināma */
+        /* Produkta karte - bilde ir klikšķināma, attēls netiek apgriezts / cropots */
         .product-card {
             background: white;
             border-radius: 20px;
@@ -107,27 +107,29 @@
             box-shadow: 0 20px 35px rgba(0,0,0,0.15);
         }
 
-        /* Attēla konteiners - tikai šis ir klikšķināms, lai atvērtu pilnekrāna bildi */
+        /* Attēla konteiners - MAINĪTS: nav fiksēta augstuma, nav overflow: hidden, nav object-fit: cover.
+           Attēls tiek rādīts oriģinālajās proporcijās, tāds kāds tas ir. */
         .product-image-container {
             width: 100%;
-            height: 250px;
-            overflow: hidden;
             background: #f0f4f8;
             position: relative;
             cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* Noņemts fixed height un overflow hidden, lai bilde netiktu apgriezta */
         }
 
         .product-image {
             width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s ease;
+            height: auto; /* Saglabā oriģinālās proporcijas */
             display: block;
             pointer-events: none; /* lai klikšķis iet caur konteinerim, bet konteiners noķer notikumu */
+            transition: transform 0.3s ease;
         }
 
         .product-card:hover .product-image {
-            transform: scale(1.05);
+            transform: scale(1.02);
         }
 
         /* Informācijas daļa - nav pogu, tikai teksts */
@@ -277,6 +279,7 @@
             to { opacity: 1; }
         }
 
+        /* MOBILĀS IERĪCES - papildus pielāgojumi, attēliem nav augstuma ierobežojumu, tie rādās oriģināli */
         @media (max-width: 768px) {
             body {
                 padding: 1rem;
@@ -294,8 +297,24 @@
                 width: 42px;
                 height: 42px;
             }
+            /* Mobilajām ierīcēm attēla konteiners bez papildus augstuma ierobežojuma, 
+               lai bilde paliek oriģinālajā formātā (tāda kāda tā ir) */
             .product-image-container {
-                height: 200px;
+                min-height: auto;
+            }
+            .product-image {
+                width: 100%;
+                height: auto;
+            }
+        }
+
+        /* Īpaši maziem ekrāniem - vēl vairāk elastības */
+        @media (max-width: 480px) {
+            .product-name {
+                font-size: 1.2rem;
+            }
+            .product-price {
+                font-size: 1.4rem;
             }
         }
     </style>
@@ -334,7 +353,8 @@
 
 <script>
     // Produktu dati - NAV groza pogu, tikai attēli, kuri ir klikšķināmi pilnekrāna skatam.
-    // Katram produktam ir "image" (mazāka bilde kartītei) un "fullImage" (pilna izmēra versija)
+    // Katram produktam ir "image" (bilde kartītei) un "fullImage" (pilna izmēra versija).
+    // Attēli tiks rādīti oriģinālajā formātā (bez crop/zoom), jo CSS ir mainīts.
     const products = [
         {
             id: 1,
@@ -369,7 +389,7 @@
             fullImage: "somat5in1.jpg"
         },
         {
-            id: 4,
+            id: 5,
             name: "Somat excellence 3in1, 87 tabletes",
             description: "Iepakojumā 87 tabletes, pieejams 1 iepakojums.",
             price: 11,
@@ -377,7 +397,7 @@
             fullImage: "somat5in1.jpg"
         },
         {
-            id: 5,
+            id: 6,
             name: "Somat Gold, 82 tabletes",
             description: "Iepakojumā 82 tabletes, pieejami 3 iepakojumi.",
             price: 10,
@@ -429,8 +449,8 @@
         }
     });
 
-    // Funkcija, kas renderē produktus: tikai attēls, nosaukums, apraksts, cena.
-    // NEKĀDU GROZA POGU. TIKAI ATTĒLS IR KLIKŠĶINĀMS, lai atvērtu pilnekrāna versiju.
+    // Funkcija, kas renderē produktus: attēls rādīts oriģinālajā formātā (bez crop, bez fiksēta augstuma),
+    // tikai attēls, nosaukums, apraksts, cena. NEKĀDU GROZA POGU. TIKAI ATTĒLS IR KLIKŠĶINĀMS.
     function renderProducts() {
         const grid = document.getElementById('productsGrid');
         if (!grid) return;
@@ -440,7 +460,7 @@
             const card = document.createElement('div');
             card.className = 'product-card';
 
-            // ATTĒLA KONTEINERS (šis ir vienīgais klikšķināmais elements, lai skatītu pilno bildi)
+            // ATTĒLA KONTEINERS - bez fiksēta augstuma, bez overflow: hidden, lai bilde tiktu rādīta oriģinālā
             const imgContainer = document.createElement('div');
             imgContainer.className = 'product-image-container';
             
@@ -449,8 +469,9 @@
             imgElement.src = product.image;
             imgElement.alt = product.name;
             imgElement.loading = 'lazy';
+            // Ja attēls neielādējas, parāda placeholder
             imgElement.onerror = () => {
-                imgElement.src = 'https://placehold.co/400x300/e67e22/white?text=Attēls+nav+pieejams';
+                imgElement.src = 'https://placehold.co/600x400/e67e22/white?text=Attēls+nav+pieejams';
             };
             imgContainer.appendChild(imgElement);
             
@@ -480,6 +501,8 @@
             
             // Neliels vizuāls norādījums, ka bilde ir klikšķināma
             const hintSpan = document.createElement('div');
+            hintSpan.className = 'image-hint';
+            hintSpan.innerHTML = '🔍 Klikšķini uz bildes, lai palielinātu';
             
             infoDiv.appendChild(nameEl);
             infoDiv.appendChild(descEl);
@@ -493,32 +516,14 @@
         });
     }
 
-    // Papildus: lai nodrošinātu, ka kategoriju pogas ved uz attiecīgajām lapām (href ir norādīti),
-    // bet, tā kā berniem.html un cits.html šajā demonstrācijā, iespējams, neeksistē, mēs neko nelaužam,
-    // vienkārši saglabājam oriģinālos href. Ja vēlaties, lai šajā failā tās neizraisa kļūdu, bet tā ir atsevišķa lapa.
-    // Tomēr uzdevuma prasība: "atgriez atpakaļ href uz kategoriju pogām" - izdarīts. Tie vada uz berniem.html un cits.html.
-    // Lai uzlabotu pieredzi un neparādītu 404 (šī ir tikai demonstrācija), varam pievienot vieglu notikumu,
-    // bet tas nav obligāti. Tā kā tās ir paredzētas kā atsevišķas lapas, atstājam tādas, kādas ir.
-    // Bet, lai lietotājs redzētu, ka navigācija strādā, pievienosim nelielu paziņojumu tikai tad,
-    // ja noklikšķina uz linkiem, lai nerastos kļūdas sajūta - tas ir tikai papildinājums, nevis obligāts.
-    // Tomēr lai saglabātu tīru risinājumu, linki paliek kā ir (href="berniem.html" utt.)
-    
-    // Lai nerastos pārpratumi par lapas pārlādi un lai demonstrācija būtu draudzīgāka,
-    // varam saglabāt oriģinālo uzvedību, bet, ja lietotājs noklikšķina un fails neeksistē, tas ir ārpus mūsu kontroles.
-    // No otras puses, "bruh, atgriez atpakaļ href" nozīmē, ka pogām jābūt parastiem saitēm - tie arī ir.
-    // Viss ir kā prasīts.
-    
-    // Mazs papildus: lai aktīvā poga atbilstu šai lapai, šeit tā ir "Mājai", un pārējās ved uz citām lapām.
-    // Viss atbilst.
-    
     // Ielādēt produktus, kad lapa gatava
     document.addEventListener('DOMContentLoaded', () => {
         renderProducts();
     });
     
-    // Neliela opcija, lai ārējie linki (ja lietotājs vēlas) netraucētu, bet tas jau darbojas.
-    // Visas bildes atveras pilnekrānā, pateicoties imgContainer klikšķa notikumam. 
-    // Pārliecināmies, ka nav citu pogu, kas traucē.
+    // Papildus: nodrošinām, ka visi attēli tiek rādīti oriģinālajā izmērā/attiecībās.
+    // CSS jau ir pielāgots: .product-image { width: 100%; height: auto; } un nav fiksēta augstuma konteinerim.
+    // Tāpat mobilajās ierīcēs attēli paliek dabiskās proporcijās bez jebkāda crop vai zoom.
 </script>
 </body>
 </html>
