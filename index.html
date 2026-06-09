@@ -500,7 +500,9 @@
             priceEl.innerHTML = `${product.price.toFixed(2)} <span class="price-unit">€</span>`;
             
             // Neliels vizuāls norādījums, ka bilde ir klikšķināma
-
+            const hintSpan = document.createElement('div');
+            hintSpan.className = 'image-hint';
+            hintSpan.innerHTML = '🔍 Klikšķini uz bildes, lai palielinātu';
             
             infoDiv.appendChild(nameEl);
             infoDiv.appendChild(descEl);
