@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Katalogs - Bērniem | Rotaļlietas un attīstošās preces</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            padding: 2rem;
+            color: #1e2a3e;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        /* Header stils */
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 1rem;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #5a6e7c;
+            margin-top: 0.5rem;
+        }
+
+        .category-icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Navigācija uz citām lapām */
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.2rem;
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            text-decoration: none;
+            background: white;
+            padding: 0.7rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            color: #2c5a74;
+            border: 2px solid #dce5ec;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .nav-btn.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 14px rgba(0,0,0,0.1);
+        }
+
+        /* Produktu režģis */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        /* Produkta karte */
+        .product-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 35px rgba(0,0,0,0.15);
+        }
+
+        /* Attēla konteiners */
+        .product-image-container {
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+            background: #f0f4f8;
+            position: relative;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover .product-image {
+            transform: scale(1.05);
+        }
+
+        /* Informācijas daļa */
+        .product-info {
+            padding: 1.5rem;
+        }
+
+        .product-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a5f;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-description {
+            color: #6b7c8f;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .product-price {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #3498db;
+            margin-bottom: 0.5rem;
+        }
+
+        .price-unit {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #8ba0b0;
+        }
+
+        .btn-add {
+            background: #f8f9fa;
+            border: 1px solid #e0e7ed;
+            padding: 0.6rem 1rem;
+            border-radius: 12px;
+            width: 100%;
+            font-weight: 600;
+            color: #3498db;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 0.5rem;
+        }
+
+        .btn-add:hover {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        /* Vecuma marķieris */
+        .age-badge {
+            display: inline-block;
+            background: #e8f4fd;
+            color: #3498db;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            margin-top: 0.5rem;
+            font-weight: 600;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 1.5rem;
+            border-top: 1px solid #c5e0f5;
+            color: #7a8e9e;
+        }
+
+        /* Paziņojuma stils */
+        .toast-message {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #3498db;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            .header h1 {
+                font-size: 2rem;
+            }
+            .products-grid {
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="category-icon">🧸</div>
+        <h1>Preces Bērniem</h1>
+        <p>Rotaļlietas, attīstošas spēles un prieka pilnas lietas mazajiem</p>
+    </div>
+
+    <!-- Navigācija uz citām kategoriju lapām -->
+    <div class="nav-links">
+        <a href="majai.html" class="nav-btn">🏠 Mājai</a>
+        <a href="#" class="nav-btn active">🧸 Bērniem</a>
+        <a href="cits.html" class="nav-btn">✨ Cits</a>
+    </div>
+
+    <!-- Produktu režģis -->
+    <div class="products-grid" id="productsGrid"></div>
+
+    <footer>
+        <p>© 2024 Bērnu preču katalogs | Drošas un sertificētas rotaļlietas</p>
+    </footer>
+</div>
+
+<script>
+    // Produktu dati kategorijai "Bērniem" ar attēlu URL
+    // ŠEIT TU VARI PIELĀGOT BILDES - nomaini 'image' lauku pret savu attēlu ceļu
+    const products = [
+        {
+            id: 1,
+            name: "Koka konstruktors 'Pils'",
+            description: "60 detaļas no dabīga koka. Attīsta motoriku, telpisko domāšanu un radošumu. Drošas, noapaļotas malas.",
+            price: 27.50,
+            age: "3+ gadi",
+            image: "https://images.unsplash.com/photo-1587654780291-39c9404d746b?w=400&h=300&fit=crop" // koka rotaļlietas
+        },
+        {
+            id: 2,
+            name: "Mīkstā rotaļlieta 'Lācītis Maksis'",
+            description: "Īpaši mīksts, hipoalerģisks pildījums, mazgājams. Ideāls mazajiem draugiem un gulēšanai līdzās.",
+            price: 19.90,
+            age: "0+ gadi",
+            image: "https://images.unsplash.com/photo-1592840496694-26d035b52b9d?w=400&h=300&fit=crop" // lācītis
+        },
+        {
+            id: 3,
+            name: "Galda spēle 'Džungļu piedzīvojumi'",
+            description: "Aizraujoša galda spēle visai ģimenei. No 4 līdz 99 gadiem, jautra spēle ar stratēģijas elementiem.",
+            price: 24.99,
+            age: "4+ gadi",
+            image: "https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=400&h=300&fit=crop" // galda spēle
+        },
+        {
+            id: 4,
+            name: "Interaktīvā pūce 'Mācību pūce'",
+            description: "Pūce atkārto vārdus, dzied dziesmas latviešu valodā, māca skaitīt. Divas AA baterijas iekļautas.",
+            price: 39.95,
+            age: "2+ gadi",
+            image: "https://images.unsplash.com/photo-1559582798-f02e37a2f689?w=400&h=300&fit=crop" // pūce
+        },
+        {
+            id: 5,
+            name: "Ritošais velosipēds 'Mini Racer'",
+            description: "Bezpedāļu velosipēds bērniem no 2 gadiem. Attīsta līdzsvaru un koordināciju. Regulējams sēdeklis.",
+            price: 79.90,
+            age: "2-5 gadi",
+            image: "https://images.unsplash.com/photo-1507035895480-2b3156c31fc8?w=400&h=300&fit=crop" // velosipēds
+        },
+        {
+            id: 6,
+            name: "Mākslas komplekts 'Mazais mākslinieks'",
+            description: "50 priekšmeti: krāsas, otas, zīmuļi, flomāsteri, līme, šķēres. Viss nepieciešams radošumam.",
+            price: 34.50,
+            age: "3+ gadi",
+            image: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=400&h=300&fit=crop" // mākslas komplekts
+        },
+        {
+            id: 7,
+            name: "Puzle 'Pasaku pils' 100 gab.",
+            description: "Krāsaina puzle ar pasaku tēliem. Attīsta pacietību un loģisko domāšanu. Izmērs 50x35 cm.",
+            price: 14.90,
+            age: "5+ gadi",
+            image: "https://images.unsplash.com/photo-1586016413661-42d5c5a45709?w=400&h=300&fit=crop" // puzle
+        },
+        {
+            id: 8,
+            name: "Krāsaino zīmuļu komplekts (36 krāsas)",
+            description: "Spilgtas, kvalitatīvas krāsas. Mīksti, viegli krāsojami. Ideāli skolai un mājām.",
+            price: 12.90,
+            age: "3+ gadi",
+            image: "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=400&h=300&fit=crop" // zīmuļi
+        },
+        {
+            id: 9,
+            name: "Lielā leļļu māja 'Sapņu mājiņa'",
+            description: "3 stāvu leļļu māja ar mēbelēm un 5 lellēm. Augstums 90cm. Viegli saliekama.",
+            price: 149.00,
+            age: "3+ gadi",
+            image: "https://images.unsplash.com/photo-1561047029-3000c6844040?w=400&h=300&fit=crop" // leļļu māja
+        },
+        {
+            id: 10,
+            name: "Mācību planšete 'Pirmais gads'",
+            description: "Interaktīva planšete ar 20 mācību spēlēm. Māca burtus, ciparus, krāsas un dzīvniekus.",
+            price: 49.95,
+            age: "2-5 gadi",
+            image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=300&fit=crop" // planšete
+        }
+    ];
+
+    // Funkcija produktu attēlošanai
+    function renderProducts() {
+        const grid = document.getElementById('productsGrid');
+        if (!grid) return;
+
+        grid.innerHTML = '';
+
+        products.forEach(product => {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+
+            card.innerHTML = `
+                <div class="product-image-container">
+                    <img class="product-image" src="${product.image}" alt="${product.name}" loading="lazy" onerror="this.src='https://placehold.co/400x300/3498db/white?text=B%C4%93rnu+prece'">
+                </div>
+                <div class="product-info">
+                    <div class="product-name">${product.name}</div>
+                    <div class="product-description">${product.description}</div>
+                    <div class="product-price">${product.price.toFixed(2)} <span class="price-unit">€</span></div>
+                    <div class="age-badge">🎂 ${product.age}</div>
+                    <button class="btn-add" data-id="${product.id}" data-name="${product.name}">🛒 Pievienot grozam</button>
+                </div>
+            `;
+
+            grid.appendChild(card);
+        });
+
+        // Pievienot notikumu klausītājus pogām
+        document.querySelectorAll('.btn-add').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const productName = btn.getAttribute('data-name');
+                showToast(`✓ "${productName}" pievienots grozam! 🎁`);
+            });
+        });
+    }
+
+    // Paziņojuma funkcija
+    function showToast(message) {
+        const existingToast = document.querySelector('.toast-message');
+        if (existingToast) {
+            existingToast.remove();
+        }
+
+        const toast = document.createElement('div');
+        toast.className = 'toast-message';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            toast.remove();
+        }, 2500);
+    }
+
+    // Ielādēt produktus, kad lapa ir gatava
+    document.addEventListener('DOMContentLoaded', renderProducts);
+</script>
+</body>
+</html>

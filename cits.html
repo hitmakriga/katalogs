@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Katalogs - Cits</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background: #f3f0f7;
+            padding: 2rem;
+            color: #2c3e50;
+        }
+        .container { max-width: 1300px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 2.5rem; }
+        h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .category-badge {
+            display: inline-block;
+            background: #9b59b6;
+            color: white;
+            padding: 0.3rem 1.5rem;
+            border-radius: 30px;
+            font-weight: bold;
+            margin-top: 0.5rem;
+        }
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        .nav-btn {
+            text-decoration: none;
+            background: white;
+            padding: 0.6rem 1.8rem;
+            border-radius: 40px;
+            font-weight: 600;
+            color: #2c5a74;
+            border: 1px solid #cbdde9;
+            transition: 0.2s;
+        }
+        .nav-btn.active {
+            background: #9b59b6;
+            color: white;
+            border-color: #9b59b6;
+        }
+        .nav-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 12px rgba(0,0,0,0.1); }
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+        .product-card {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+        .product-card:hover { transform: translateY(-6px); }
+        .product-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: #eef2f7;
+        }
+        .product-info { padding: 1.2rem; }
+        .product-name { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .product-desc { color: #4a627a; font-size: 0.9rem; margin-bottom: 1rem; line-height: 1.4; }
+        .product-price { font-size: 1.5rem; font-weight: 800; color: #2c7a4d; }
+        footer { text-align: center; margin-top: 3rem; padding: 1.5rem; color: #6b8eaa; border-top: 1px solid #cbdde9; }
+        @media (max-width: 680px) { body { padding: 1rem; } }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>✨ Katalogs — Cits</h1>
+        <div class="category-badge">Unikālas lietas & pārsteigumi</div>
+    </header>
+
+    <div class="nav-links">
+        <a href="majai.html" class="nav-btn">🏠 Mājai</a>
+        <a href="berniem.html" class="nav-btn">🧸 Bērniem</a>
+        <a href="cits.html" class="nav-btn active">✨ Cits</a>
+    </div>
+
+    <div class="products-grid" id="products-container"></div>
+    <footer>🌟 Dāvanām, vaļaspriekiem un ikdienas brīžiem</footer>
+</div>
+
+<script>
+    const products = [
+        {
+            name: "Bezvadu uzlādes statīvs",
+            desc: "Ātra 15W uzlāde telefonam, kluso režīmu LEDs indikators.",
+            price: "22.90 €",
+            image: "https://picsum.photos/id/0/400/300"
+        },
+        {
+            name: "Miniatūrs augu komplekts 'Sukulents'",
+            desc: "Īsts dzīvs augs, dekoratīvā keramikas podiņā. Lieliska dāvana.",
+            price: "12.50 €",
+            image: "https://picsum.photos/id/127/400/300"
+        },
+        {
+            name: "Kino abonements (3 mēneši)",
+            desc: "Piekļuve simtiem filmu un seriālu, bez reklāmām. Digitāla dāvana.",
+            price: "29.99 €",
+            image: "https://picsum.photos/id/2/400/300"
+        },
+        {
+            name: "Radošs DIY sveču komplekts",
+            desc: "Pagatavo pats savas vaska sveces ar lavandu un medus smaržu.",
+            price: "18.40 €",
+            image: "https://picsum.photos/id/66/400/300"
+        }
+    ];
+
+    function renderProducts() {
+        const container = document.getElementById('products-container');
+        if (!container) return;
+        container.innerHTML = '';
+        products.forEach(p => {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.innerHTML = `
+                <img class="product-img" src="${p.image}" alt="${p.name}" loading="lazy">
+                <div class="product-info">
+                    <div class="product-name">${p.name}</div>
+                    <div class="product-desc">${p.desc}</div>
+                    <div class="product-price">${p.price}</div>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+    window.addEventListener('DOMContentLoaded', renderProducts);
+</script>
+</body>
+</html>
